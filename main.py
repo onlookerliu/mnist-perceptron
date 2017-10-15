@@ -11,6 +11,11 @@ def activation_unbiased(dot_result, target):
             return target
     return 0
 
+def normalize(input):
+    s = sum(input)
+    norm = np.array([float(i) / s for i in input])
+    return norm
+
 def train(train_set, nr_iter, train_rate):
     PERCEPTRONS = np.zeros((10, 784), dtype=np.float)
     all_classified = False
