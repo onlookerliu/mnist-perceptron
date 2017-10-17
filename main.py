@@ -46,28 +46,30 @@ def normalize(input):
     s = np.sum(input)
     return np.array([float(i)/s for i in input])
 
-def activation(input, bias, target):
-    return (input[target] - input[bias] > 0) * 1
+def activation(input, target):
+    return (input[target] > 0.5) * 1
 
 def train(train_set, nr_iter, learn_rate):
-    PERCEPTRONS = np.matrix((784,10), dtype = np.float)
+    PERCEPTRONS = np.random.rand(784, 10)
     allClassified = False
     bias = np.array(10 * [0.0])
 
     while(allClassified == False and nr_iter > 0):
         for (pxl_arr, target) in zip(train_set[0], train_set[1]):
 
-            z = np.dot(pxl_arr, PERCEPTRONS)
-            output = activation(z, bias)
-            PERCEPTRONS[:,target] += PERCEPTRONS[:,target] * (target-output)*learn_rate
-            bias[target] += (target-output) * learn_rate
-            if(output != target):
+            z = normalize(np.dot(pxl_arr, PERCEPTRONS))
+            output = activation(z, target)
+            PERCEPTRONS[:,target] += pxl_arr * (1.0-z[target])*learn_rate
+            if(output != 1):
+                bias[target] += (1.0 - z[target]) * learn_rate
                 allClassified = False
         nr_iter -= 1
         if(nr_iter < 20):
-            learn_rate = 0.4
+            learn_rate = 0.03
         if(nr_iter < 10):
-            learn_rate = 0.2
+            learn_rate = 0.01
+        print nr_iter
+    return PERCEPTRONS, bias
 
 def test(test_set, weights, bias):
     well_classified = 0
@@ -80,5 +82,6 @@ def test(test_set, weights, bias):
     return (100.0 * well_classified)/len(test_set[0])
 
 
-WEIGHTS = train(train_set, 20, 0.8)
+WEIGHTS, bias = train(train_set, 40, 0.05)
+print WEIGHTS, bias
 
