@@ -46,42 +46,52 @@ def normalize(input):
     s = np.sum(input)
     return np.array([float(i)/s for i in input])
 
-def activation(input, target):
-    return (input[target] > 0.5) * 1
+def activation(input, bias):
+    if(bias != 0.0):
+        return (input > bias) * 1
+    return 0
 
 def train(train_set, nr_iter, learn_rate):
     PERCEPTRONS = np.random.rand(784, 10)
+    #PERCEPTRONS = np.zeros((784, 10), dtype=np.float)
     allClassified = False
     bias = np.array(10 * [0.0])
 
     while(allClassified == False and nr_iter > 0):
         for (pxl_arr, target) in zip(train_set[0], train_set[1]):
 
-            z = normalize(np.dot(pxl_arr, PERCEPTRONS))
-            output = activation(z, target)
-            PERCEPTRONS[:,target] += pxl_arr * (1.0-z[target])*learn_rate
+            z = np.dot(pxl_arr, PERCEPTRONS) + bias
+            output = activation(z[target], bias[target])
+            PERCEPTRONS[:,target]=((PERCEPTRONS[:,target]).transpose()+ pxl_arr * (1 - output)*learn_rate).transpose()
+            bias[target] += (1 - output) * learn_rate
             if(output != 1):
-                bias[target] += (1.0 - z[target]) * learn_rate
                 allClassified = False
         nr_iter -= 1
         if(nr_iter < 20):
-            learn_rate = 0.03
+            learn_rate = 0.3
         if(nr_iter < 10):
-            learn_rate = 0.01
+            learn_rate = 0.1
         print nr_iter
     return PERCEPTRONS, bias
 
 def test(test_set, weights, bias):
     well_classified = 0
     for (digit_arr, target) in zip(test_set[0], test_set[1]):
-        z = np.dot(weights, digit_arr)
+        z = np.dot(digit_arr, weights) + bias
 
-        if(target == activation(z, bias, target)):
+        if(activation(z[target], bias[target]) == 1):
             well_classified +=1
 
     return (100.0 * well_classified)/len(test_set[0])
 
 
-WEIGHTS, bias = train(train_set, 40, 0.05)
-print WEIGHTS, bias
+# WEIGHTS, bias = train(train_set, 40, 0.5)
+# print WEIGHTS, bias
+#
+# print test(test_set,WEIGHTS,bias)
 
+
+arr = np.array([4, 6, 8])
+a=np.matrix('1 2 3; 4 5 6; 7 8 9')
+
+print a[:,1].transpose().transpose()
