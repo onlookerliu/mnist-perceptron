@@ -11,7 +11,6 @@ def max_activation(input):
     max = np.max(input)
     return np.where(input == max)[0]
 
-
 def train(train_set, nr_iter, learn_rate):
     #PERCEPTRONS = np.zeros((10, 784), dtype=np.float)
     PERCEPTRONS = np.random.uniform(low=-3.0/784, high=3.0/784, size=(10, 784))
@@ -64,9 +63,3 @@ with open('weights_file', 'w') as outfile:
 with open('bias_file_out', 'w') as outfile:
     for b in bias:
         outfile.write(str(b) +" ")
-
-
-
-
-
-
