@@ -8,8 +8,12 @@ f.close()
 
 
 def normalize(dot_result):
-    return (input - np.mean(dot_result))/np.std(dot_result)
-#   return np.array(ss.zscore(input))
+    #   min_val = np.min(dot_result)
+    #   max_val = np.max(dot_result)
+    #   return np.array([(x - min_val)/(max_val-min_val) for x in dot_result])
+
+    return (dot_result - np.mean(dot_result))/np.std(dot_result)
+    #   return np.array(ss.zscore(input))
 
 
 def max_activation(dot_result):
@@ -56,7 +60,7 @@ def test(tester_set, weights, bias_arr):
     return (100.0 * well_classified)/len(tester_set[0])
 
 
-WEIGHTS, bias = train(train_set, 30, 0.08)
+WEIGHTS, bias = train(train_set, 50, 0.05)
 print WEIGHTS, bias
 
 print test(test_set, WEIGHTS, bias)
