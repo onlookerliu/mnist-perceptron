@@ -25,7 +25,7 @@ def max_activation(dot_result):
 
 def train(trainer_set, nr_iter, learn_rate):
     #   weights_mat = np.zeros((10, 784), dtype=np.float)
-    weights_mat = np.random.uniform(low=-3.0/784, high=3.0/784, size=(10, 784))
+    weights_mat = np.random.uniform(low=-3.0/28, high=3.0/28, size=(10, 784))
     bias_arr = np.array(10 * [0.0])
 
     success_rate = 0.0
@@ -73,7 +73,7 @@ def multiple_perceptron_test(tester_set, weights, bias_arr):
     print correct
     return (100.0 * correct)/len(tester_set[0])
 
-WEIGHTS, bias = train(train_set, 0, 0.05)
+WEIGHTS, bias = train(train_set, 0, 0.3)
 print WEIGHTS, bias
 
 print test(test_set, WEIGHTS, bias)
