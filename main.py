@@ -1,6 +1,8 @@
 import cPickle
 import gzip
 import numpy as np
+from scipy.special import expit
+import math
 
 f = gzip.open('mnist.pkl.gz', 'rb')
 train_set, valid_set, test_set = cPickle.load(f)
@@ -23,6 +25,8 @@ def target_arr(target):
     target_result[target] = 1.0
     return target_result
 
+def sigmoid(dot_result):
+    return np.array([1.0/(1+math.exp(-x)) for x in dot_result])
 
 def train(trainer_set, nr_iter, learn_rate):
     #   weights_mat = np.zeros((10, 784), dtype=np.float)
@@ -34,7 +38,7 @@ def train(trainer_set, nr_iter, learn_rate):
 
         for (pxl_arr, target) in zip(trainer_set[0], trainer_set[1]):
 
-            z = mask_normalize(np.dot(weights_mat, pxl_arr) + bias_arr)
+            z = sigmoid(np.dot(weights_mat, pxl_arr) + bias_arr)
             output_class = max_activation(z)
             true_output = target_arr(target)
 
@@ -57,7 +61,7 @@ def test(tester_set, weights, bias_arr):
     well_classified = 0
     for (digit_arr, target) in zip(tester_set[0], tester_set[1]):
 
-        z = mask_normalize(np.dot(weights, digit_arr) + bias_arr)
+        z = sigmoid(np.dot(weights, digit_arr) + bias_arr)
         output_class = max_activation(z)
         if output_class == target:
             well_classified += 1
@@ -75,7 +79,7 @@ def multiple_perceptron_test(tester_set, weights, bias_arr):
     return (100.0 * correct) / len(tester_set[0])
 
 
-WEIGHTS, bias = train(train_set, 20, 0.05)
+WEIGHTS, bias = train(train_set, 40, 0.03)
 print WEIGHTS, bias
 
 print test(test_set, WEIGHTS, bias)
