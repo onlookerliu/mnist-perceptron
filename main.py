@@ -1,11 +1,10 @@
-import cPickle
+import _pickle
 import gzip
 import numpy as np
-from scipy.special import expit
 import math
 
 f = gzip.open('mnist.pkl.gz', 'rb')
-train_set, valid_set, test_set = cPickle.load(f)
+train_set, valid_set, test_set = _pickle.load(f, encoding='latin1')
 f.close()
 
 
@@ -17,7 +16,7 @@ def max_activation(dot_result):
 def mask_normalize(dot_result):
     min_val = abs(np.min(dot_result)) + 1.0
     masked_sum = len(dot_result) * min_val + np.sum(dot_result)
-    return np.array([(float(x)+min_val)/masked_sum for x in dot_result])
+    return np.array([(float(x) + min_val) / masked_sum for x in dot_result])
 
 
 def target_arr(target):
@@ -25,12 +24,14 @@ def target_arr(target):
     target_result[target] = 1.0
     return target_result
 
+
 def sigmoid(dot_result):
-    return np.array([1.0/(1+math.exp(-x)) for x in dot_result])
+    return np.array([1.0 / (1 + math.exp(-x)) for x in dot_result])
+
 
 def train(trainer_set, nr_iter, learn_rate):
     #   weights_mat = np.zeros((10, 784), dtype=np.float)
-    weights_mat = np.random.uniform(low=-1.0/28, high=1.0/28, size=(10, 784))
+    weights_mat = np.random.uniform(low=-1.0 / 28, high=1.0 / 28, size=(10, 784))
     bias_arr = np.array(10 * [0.0])
 
     while nr_iter > 0:
@@ -42,19 +43,20 @@ def train(trainer_set, nr_iter, learn_rate):
             output_class = max_activation(z)
             true_output = target_arr(target)
             if nr_iter == 1:
-                print z, target
+                print(z, target)
             if output_class != target:
                 error_arr = true_output - z
                 for idx, error in enumerate(error_arr):
                     weights_mat[idx] += pxl_arr * error * learn_rate
                     bias_arr[idx] += error * learn_rate
+                all_number -= 1
 
             if output_class != target:
-                all_number -= 1
-        success_rate = (100.0 * all_number) / len(trainer_set[0])
-        print success_rate
+                success_rate = (100.0 * all_number) / len(trainer_set[0])
+        print(all_number)
+        print(success_rate)
         nr_iter -= 1
-        print nr_iter
+        print(nr_iter)
     return weights_mat, bias_arr
 
 
@@ -76,14 +78,14 @@ def multiple_perceptron_test(tester_set, weights, bias_arr):
         results = np.array([np.dot(pxl_arr, weight_arr) for weight_arr in weights]) - np.array(bias_arr)
         if max_activation(results) == target:
             correct += 1
-    print correct
+    print(correct)
     return (100.0 * correct) / len(tester_set[0])
 
 
 WEIGHTS, bias = train(train_set, 40, 0.03)
-print WEIGHTS, bias
+print(WEIGHTS, bias)
 
-print test(test_set, WEIGHTS, bias)
+print(test(test_set, WEIGHTS, bias))
 
 with open('weights_file', 'w') as outfile:
     for row in WEIGHTS:
@@ -94,4 +96,3 @@ with open('weights_file', 'w') as outfile:
 with open('bias_file_out', 'w') as outfile:
     for b in bias:
         outfile.write(str(b) + " ")
-
