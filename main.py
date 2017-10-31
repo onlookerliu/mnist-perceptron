@@ -41,7 +41,8 @@ def train(trainer_set, nr_iter, learn_rate):
             z = sigmoid(np.dot(weights_mat, pxl_arr) + bias_arr)
             output_class = max_activation(z)
             true_output = target_arr(target)
-
+            if nr_iter == 1:
+                print z, target
             if output_class != target:
                 error_arr = true_output - z
                 for idx, error in enumerate(error_arr):
@@ -93,3 +94,4 @@ with open('weights_file', 'w') as outfile:
 with open('bias_file_out', 'w') as outfile:
     for b in bias:
         outfile.write(str(b) + " ")
+
