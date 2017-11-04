@@ -72,16 +72,6 @@ def test(tester_set, weights, bias_arr):
     return (100.0 * well_classified) / len(tester_set[0])
 
 
-def multiple_perceptron_test(tester_set, weights, bias_arr):
-    correct = 0
-    for pxl_arr, target in zip(tester_set[0], tester_set[1]):
-        results = np.array([np.dot(pxl_arr, weight_arr) for weight_arr in weights]) - np.array(bias_arr)
-        if max_activation(results) == target:
-            correct += 1
-    print(correct)
-    return (100.0 * correct) / len(tester_set[0])
-
-
 WEIGHTS, bias = train(train_set, 40, 0.03)
 print(WEIGHTS, bias)
 
